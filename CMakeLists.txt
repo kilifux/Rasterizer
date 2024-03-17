@@ -3,10 +3,12 @@ project(algorytmy)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(algorytmy main.cpp
-        TGABuffer.h
-        TGABuffer.cpp
-        Rasterizer.h
-        Rasterizer.cpp
-        Vector.cpp
-        Vector.h)
+include_directories(src/include)
+
+add_executable(algorytmy src/src/main.cpp
+        src/include/TGABuffer.h
+        src/src/TGABuffer.cpp
+        src/include/Rasterizer.h
+        src/src/Rasterizer.cpp
+        src/src/Vector.cpp
+        src/include/Vector.h)
