@@ -1,6 +1,7 @@
 #include "TGABuffer.h"
 #include "Vector.h"
 #include "Rasterizer.h"
+#include "Triangle.h"
 
 
 int main() {
@@ -13,7 +14,9 @@ int main() {
 
     Rasterizer rasterizer(&tgaImg);
 
-    rasterizer.Rasterize(Vector(0.5f, -0.5f, 0.0f), Vector(-0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f));
+    Triangle triangle(Vector(0.5f, -0.5f, 0.0f), Vector(-0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
+
+    rasterizer.Rasterize(triangle);
 
     if (!tgaImg.WriteTGA("test.tga"))
         return -1;

@@ -11,4 +11,6 @@ add_executable(algorytmy src/src/main.cpp
         src/include/Rasterizer.h
         src/src/Rasterizer.cpp
         src/src/Vector.cpp
-        src/include/Vector.h)
+        src/include/Vector.h
+        src/src/Triangle.cpp
+        src/src/Triangle.h)

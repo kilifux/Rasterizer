@@ -1,27 +1,59 @@
 #include "Rasterizer.h"
 #include "Vector.h"
 #include "TGABuffer.h"
+#include <algorithm>
+#include "Triangle.h"
+#include <iostream>
 
 Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
 }
 
-void Rasterizer::Rasterize(const Vector &vector1, const Vector &vector2, const Vector &vector3) {
+void Rasterizer::Rasterize(Triangle &triangle) {
 
     int width = tgaBuffer->GetWidth();
     int height = tgaBuffer->GetHeight();
 
-    for (int x = 0; x < width; ++x) {
-        for (int y = 0; y < height; ++y) {
+    int x1 = (triangle.vertices[0].x + 1.f) * width * 0.5f, x2 = (triangle.vertices[1].x + 1.f) * width * 0.5f, x3 = (triangle.vertices[2].x + 1.f) * width * 0.5f;
+    int y1 = (triangle.vertices[0].y + 1.f) * height * 0.5f, y2 = (triangle.vertices[1].y + 1.f) * height * 0.5f, y3 = (triangle.vertices[2].y + 1.f) * height * 0.5f;
 
-            float scaledX = ((float)x / (width - 1)) * 2.0f - 1.0f;
-            float scaledY = ((float)y / (height - 1)) * 2.0f - 1.0f;
+    int minx = std::min({x1, x2, x3});
+    int maxx = std::max({x1, x2, x3});
+    int miny = std::min({y1, y2, y3});
+    int maxy = std::max({y1, y2, y3});
 
-            if (    (vector1.x - vector2.x) * (scaledY - vector1.y) - (vector1.y - vector2.y) * (scaledX - vector1.x) > 0.0f &&
-                    (vector2.x - vector3.x) * (scaledY - vector2.y) - (vector2.y - vector3.y) * (scaledX - vector2.x) > 0.0f &&
-                    (vector3.x - vector1.x) * (scaledY - vector3.y) - (vector3.y - vector1.y) * (scaledX - vector3.x) > 0.0f )
+    minx = std::max(minx, 0);
+    maxx = std::min(maxx, width - 1);
+    miny = std::max(miny, 0);
+    maxy = std::min(maxy, height - 1);
+
+    float dx12 = x1 - x2;
+    float dx13 = x1 - x3;
+    float dx23 = x2 - x3;
+    float dx31 = x3 - x1;
+    float dx32 = x3 - x2;
+    float dy12 = y1 - y2;
+    float dy13 = y1 - y3;
+    float dy23 = y2 - y3;
+    float dy31 = y3 - y1;
+
+    for (int x = minx; x < maxx; ++x) {
+        for (int y = miny; y < maxy; ++y) {
+
+            if (    (dx12) * (y - y1) - (dy12) * (x - x1) > 0.0f &&
+                    (dx23) * (y - y2) - (dy23) * (x - x2) > 0.0f &&
+                    (dx31) * (y - y3) - (dy31) * (x - x3) > 0.0f )
             {
-                tgaBuffer->GetColorBuffer()[y * tgaBuffer->GetWidth() + x] = 0xFFFFFFFF;
+                float bar1 = ((dy23) * (x - x3) + (dx32) * (y - y3)) / ((dy23) * (dx13) + (dx32) * (dy13));
+                float bar2 = ((dy31) * (x - x3) + (dx13) * (y - y3)) / ((dy31) * (dx23) + (dx13) * (dy23));
+                float bar3 = 1.f - bar1 - bar2;
+
+                Vector color1 = Vector::ToVector(triangle.colors[0]);
+                Vector color2 = Vector::ToVector(triangle.colors[1]);
+                Vector color3 = Vector::ToVector(triangle.colors[2]);
+
+                Vector color =  color1 * bar1 + color2 * bar2 + color3 * bar3;
+                tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color);
             }
         }
     }
