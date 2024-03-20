@@ -16,6 +16,7 @@ void Rasterizer::Rasterize(Triangle &triangle) {
 
     int x1 = (triangle.vertices[0].x + 1.f) * width * 0.5f, x2 = (triangle.vertices[1].x + 1.f) * width * 0.5f, x3 = (triangle.vertices[2].x + 1.f) * width * 0.5f;
     int y1 = (triangle.vertices[0].y + 1.f) * height * 0.5f, y2 = (triangle.vertices[1].y + 1.f) * height * 0.5f, y3 = (triangle.vertices[2].y + 1.f) * height * 0.5f;
+    int z1 = triangle.vertices[0].z, z2 = triangle.vertices[1].z, z3 = triangle.vertices[2].z;
 
     int minx = std::min({x1, x2, x3});
     int maxx = std::max({x1, x2, x3});
@@ -37,13 +38,21 @@ void Rasterizer::Rasterize(Triangle &triangle) {
     float dy23 = y2 - y3;
     float dy31 = y3 - y1;
 
+    bool tl1 = (dy12 < 0 || (dy12 == 0 && dx12 > 0));
+    bool tl2 = (dy23 < 0 || (dy23 == 0 && dx23 > 0));
+    bool tl3 = (dy31 < 0 || (dy31 == 0 && dx31 > 0));
+
     for (int x = minx; x < maxx; ++x) {
         for (int y = miny; y < maxy; ++y) {
 
-            if (    (dx12) * (y - y1) - (dy12) * (x - x1) > 0.0f &&
-                    (dx23) * (y - y2) - (dy23) * (x - x2) > 0.0f &&
-                    (dx31) * (y - y3) - (dy31) * (x - x3) > 0.0f )
-            {
+            float edge1 = (dx12) * (y - y1) - (dy12) * (x - x1);
+            float edge2 = (dx23) * (y - y2) - (dy23) * (x - x2);
+            float edge3 =  (dx31) * (y - y3) - (dy31) * (x - x3);
+
+            if (   (edge1 > 0 || (edge1 >= 0 && tl1))
+                && (edge2 > 0 || (edge2 >= 0 && tl2))
+                && (edge3 > 0 || (edge3 >= 0 && tl3))) {
+
                 float bar1 = ((dy23) * (x - x3) + (dx32) * (y - y3)) / ((dy23) * (dx13) + (dx32) * (dy13));
                 float bar2 = ((dy31) * (x - x3) + (dx13) * (y - y3)) / ((dy31) * (dx23) + (dx13) * (dy23));
                 float bar3 = 1.f - bar1 - bar2;
@@ -53,7 +62,14 @@ void Rasterizer::Rasterize(Triangle &triangle) {
                 Vector color3 = Vector::ToVector(triangle.colors[2]);
 
                 Vector color =  color1 * bar1 + color2 * bar2 + color3 * bar3;
-                tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color);
+                float depth = bar1 * z1 + bar2 * z2 + bar3 * z3;
+                if (depth < tgaBuffer->GetDepth()[y * width + x])
+                {
+                    tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color);
+                    tgaBuffer->GetDepth()[y * width + x] = depth;
+                }
+
+
             }
         }
     }

@@ -11,12 +11,23 @@ int main() {
     TGABuffer tgaImg(width, height);
 
     tgaImg.ClearColor(0xFF8888FF); // ARGB
+    tgaImg.ClearDepth(std::numeric_limits<float>::max());
 
     Rasterizer rasterizer(&tgaImg);
 
-    Triangle triangle(Vector(0.5f, -0.5f, 0.0f), Vector(-0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
+    //Wypelnienie
+/*    Triangle triangle(Vector(0.5f, -0.5f, 0.0f), Vector(-0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
+    Triangle triangle2(Vector(0.9f, -0.5f, 0.0f), Vector(0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
 
     rasterizer.Rasterize(triangle);
+    rasterizer.Rasterize(triangle2);*/
+
+    //Glebokosc
+    Triangle triangle(Vector(0.5f, -0.5f, -1.0f), Vector(-0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFAAFFAA, 0xFFAAFFAA, 0xFFAAFFAA);
+    Triangle triangle2(Vector(0.9f, -0.5f, 0.0f), Vector(0.0f, -0.5f, -1.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFDDAAFF, 0xFFDDAAFF, 0xFFDDAAFF);
+
+    rasterizer.Rasterize(triangle);
+    rasterizer.Rasterize(triangle2);
 
     if (!tgaImg.WriteTGA("test.tga"))
         return -1;

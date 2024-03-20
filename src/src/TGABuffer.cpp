@@ -4,6 +4,7 @@
 
 TGABuffer::TGABuffer(unsigned int width, unsigned int height) : width(width), height(height) {
     colorBuffer = new unsigned int[width * height];
+    depth = new float[width * height];
 }
 
 TGABuffer::~TGABuffer() {
@@ -13,6 +14,12 @@ TGABuffer::~TGABuffer() {
 void TGABuffer::ClearColor(unsigned int color) {
     for (unsigned int i = 0; i < width * height; ++i) {
         colorBuffer[i] = color;
+    }
+}
+
+void TGABuffer::ClearDepth(float value) {
+    for (unsigned int i = 0; i < width * height; ++i) {
+        depth[i] = value;
     }
 }
 
@@ -38,5 +45,7 @@ bool TGABuffer::WriteTGA(const char* fileName) {
 
     return true;
 }
+
+
 
 
