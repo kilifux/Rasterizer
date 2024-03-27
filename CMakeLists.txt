@@ -13,4 +13,10 @@ add_executable(algorytmy src/src/main.cpp
         src/src/Vector.cpp
         src/include/Vector.h
         src/src/Triangle.cpp
-        src/src/Triangle.h)
+        src/src/Triangle.h
+        src/src/Vector4.cpp
+        src/include/Vector4.h
+        src/src/Matrix4.cpp
+        src/include/Matrix4.h
+        src/src/VertexProcessor.cpp
+        src/include/VertexProcessor.h)

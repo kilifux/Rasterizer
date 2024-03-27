@@ -2,6 +2,8 @@
 #include "Vector.h"
 #include "Rasterizer.h"
 #include "Triangle.h"
+#include "Matrix4.h"
+#include "VertexProcessor.h"
 
 
 int main() {
@@ -15,16 +17,14 @@ int main() {
 
     Rasterizer rasterizer(&tgaImg);
 
-    //Wypelnienie
-/*    Triangle triangle(Vector(0.5f, -0.5f, 0.0f), Vector(-0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
-    Triangle triangle2(Vector(0.9f, -0.5f, 0.0f), Vector(0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
+    Matrix4 camera = Matrix4::Identity();
+    camera = VertexProcessor::setLookat({2.f, 2.f, 2.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 1.f}) * camera;
 
-    rasterizer.Rasterize(triangle);
-    rasterizer.Rasterize(triangle2);*/
 
-    //Glebokosc
-    Triangle triangle(Vector(0.5f, -0.5f, -1.0f), Vector(-0.5f, -0.5f, 0.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFAAFFAA, 0xFFAAFFAA, 0xFFAAFFAA);
-    Triangle triangle2(Vector(0.9f, -0.5f, 0.0f), Vector(0.0f, -0.5f, -1.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFDDAAFF, 0xFFDDAAFF, 0xFFDDAAFF);
+
+    //Glebokosc depth (tym bardziej na minusie tym bliżej kamery)
+    Triangle triangle(Vector(0.9f, -0.5f, -1.0f), Vector(0.0f, -0.5f, -1.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFAAFFAA, 0xFFAAFFAA, 0xFFAAFFAA);    //zielony
+    Triangle triangle2(Vector(0.9f, -0.5f, 0.0f), Vector(0.0f, -0.5f, -1.0f), Vector(0.0f, 0.5f, 0.0f), 0xFFDDAAFF, 0xFFDDAAFF, 0xFFDDAAFF);    //różowy
 
     rasterizer.Rasterize(triangle);
     rasterizer.Rasterize(triangle2);
@@ -34,3 +34,21 @@ int main() {
 
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

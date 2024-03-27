@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "Triangle.h"
 #include <iostream>
+#include "VertexProcessor.h"
 
 Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
@@ -63,7 +64,7 @@ void Rasterizer::Rasterize(Triangle &triangle) {
 
                 Vector color =  color1 * bar1 + color2 * bar2 + color3 * bar3;
                 float depth = bar1 * z1 + bar2 * z2 + bar3 * z3;
-                if (depth < tgaBuffer->GetDepth()[y * width + x])
+                if (depth    < tgaBuffer->GetDepth()[y * width + x])
                 {
                     tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color);
                     tgaBuffer->GetDepth()[y * width + x] = depth;
