@@ -30,5 +30,5 @@ public:
     static Vector ToVector(unsigned int color);
     static unsigned int ToColor(Vector vector);
 
-
+    static Vector cross(Vector a, Vector b);
 };

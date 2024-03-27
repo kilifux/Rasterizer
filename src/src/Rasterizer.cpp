@@ -15,8 +15,23 @@ void Rasterizer::Rasterize(Triangle &triangle) {
     int width = tgaBuffer->GetWidth();
     int height = tgaBuffer->GetHeight();
 
-    int x1 = (triangle.vertices[0].x + 1.f) * width * 0.5f, x2 = (triangle.vertices[1].x + 1.f) * width * 0.5f, x3 = (triangle.vertices[2].x + 1.f) * width * 0.5f;
-    int y1 = (triangle.vertices[0].y + 1.f) * height * 0.5f, y2 = (triangle.vertices[1].y + 1.f) * height * 0.5f, y3 = (triangle.vertices[2].y + 1.f) * height * 0.5f;
+    Matrix4 camera = Matrix4::Identity();
+    camera = camera * VertexProcessor::setPerspective(120.f, 1.f, 0.01f, 100.f);
+
+   Vector4 transformedVertex1 = camera * Vector4(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[0].z, 1.0f);
+    int x1 = (transformedVertex1.x + 1.0f) * width * 0.5f;
+    int y1 = (transformedVertex1.y + 1.0f) * height * 0.5f;
+
+    Vector4 transformedVertex2 = camera * Vector4(triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[1].z, 1.0f);
+    int x2 = (transformedVertex2.x + 1.0f) * width * 0.5f;
+    int y2 = (transformedVertex2.y + 1.0f) * height * 0.5f;
+
+    Vector4 transformedVertex3 = camera * Vector4(triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[2].z, 1.0f);
+    int x3 = (transformedVertex3.x + 1.0f) * width * 0.5f;
+    int y3 = (transformedVertex3.y + 1.0f) * height * 0.5f;
+
+/*    int x1 = (triangle.vertices[0].x + 1.f) * width * 0.5f, x2 = (triangle.vertices[1].x + 1.f) * width * 0.5f, x3 = (triangle.vertices[2].x + 1.f) * width * 0.5f;
+    int y1 = (triangle.vertices[0].y + 1.f) * height * 0.5f, y2 = (triangle.vertices[1].y + 1.f) * height * 0.5f, y3 = (triangle.vertices[2].y + 1.f) * height * 0.5f; */
     int z1 = triangle.vertices[0].z, z2 = triangle.vertices[1].z, z3 = triangle.vertices[2].z;
 
     int minx = std::min({x1, x2, x3});

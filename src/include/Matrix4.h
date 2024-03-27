@@ -72,7 +72,7 @@ public:
         return result;
     }
 
-    Matrix4 operator*(Matrix4& other) {
+    Matrix4 operator*(const Matrix4& other) const {
         Matrix4 result;
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
@@ -92,6 +92,11 @@ public:
             result[i] = rows[i] * scalar;
         }
         return result;
+    }
+
+    Matrix4 &operator*=(Matrix4& other) {
+        *this = *this * other;
+        return *this;
     }
 
     Vector4 operator*(const Vector4& vector) const {

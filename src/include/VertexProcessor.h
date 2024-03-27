@@ -7,8 +7,8 @@
 class VertexProcessor {
 
     Matrix4 obj2world;
-    static Matrix4 world2view;
-    static Matrix4 view2proj;
+    Matrix4 world2view;
+    Matrix4 view2proj;
 
 public:
     static Matrix4 setPerspective(float fovy, float aspect, float near, float far);

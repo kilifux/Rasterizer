@@ -7,12 +7,12 @@
 
 class Vector4 {
 public:
-    float x, y, z, w;
+    mutable float x, y, z, w;
 
     Vector4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f)
             : x(x), y(y), z(z), w(w) {}
 
-    float& operator[](int index) {
+    float& operator[](int index) const {
         switch (index) {
             case 0: return x;
             case 1: return y;
