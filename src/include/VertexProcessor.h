@@ -12,7 +12,10 @@ class VertexProcessor {
 
 public:
     static Matrix4 setPerspective(float fovy, float aspect, float near, float far);
-    static Matrix4 setLookat(Vector eye, Vector center, Vector up);
+    static Matrix4 setLookAt(Vector eye, Vector center, Vector up);
+    static Matrix4 multByTranslation(Vector v);
+    static Matrix4 multByScale(Vector v);
+    static Matrix4 multByRotation(float a, Vector v);
 };
 
 
