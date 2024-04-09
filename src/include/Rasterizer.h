@@ -4,6 +4,7 @@
 class TGABuffer;
 class Vector;
 class Triangle;
+class Matrix4;
 
 class Rasterizer {
     TGABuffer* tgaBuffer;
@@ -11,7 +12,7 @@ class Rasterizer {
 public:
     Rasterizer(TGABuffer* buffer);
 
-    void Rasterize(Triangle &triangle);
+    void Rasterize(Triangle &triangle, Matrix4 &model);
 };
 
 

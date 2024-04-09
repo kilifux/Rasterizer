@@ -10,7 +10,7 @@ Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
 }
 
-void Rasterizer::Rasterize(Triangle &triangle) {
+void Rasterizer::Rasterize(Triangle &triangle, Matrix4 &model) {
 
     int width = tgaBuffer->GetWidth();
     int height = tgaBuffer->GetHeight();
@@ -21,15 +21,8 @@ void Rasterizer::Rasterize(Triangle &triangle) {
     Matrix4 projectionMatrix = VertexProcessor::setPerspective(120.f, 1.f, 0.01f, 100.f);
 
     Matrix4 camera =  Matrix4::Identity();
-    Matrix4 model = Matrix4::Identity();
-
-    model = model *  VertexProcessor::multByScale(Vector(2, 2, 2));
-    model = model *  VertexProcessor::multByRotation(-25.f, Vector(0, 0, 1));
-    model = model * VertexProcessor::multByTranslation(Vector(0, -1, 0));
 
     camera = camera * projectionMatrix * viewMatrix;
-    camera = camera * projectionMatrix;
-
 
     Vector4 transformedVertex1 =  model * camera * Vector4(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[0].z, 1.0f);
     int x1 = (transformedVertex1.x + 1.0f) * width * 0.5f;
