@@ -21,22 +21,25 @@ void Rasterizer::Rasterize(Triangle &triangle) {
     Matrix4 projectionMatrix = VertexProcessor::setPerspective(120.f, 1.f, 0.01f, 100.f);
 
     Matrix4 camera =  Matrix4::Identity();
-
-    camera = camera * projectionMatrix * viewMatrix ;
-
     Matrix4 model = Matrix4::Identity();
 
-    //model = model * VertexProcessor::multByTranslation(Vector(5, 0, 0)); //* VertexProcessor::multByScale(Vector(2, 2, 2));
+    model = model *  VertexProcessor::multByScale(Vector(2, 2, 2));
+    model = model *  VertexProcessor::multByRotation(-25.f, Vector(0, 0, 1));
+    model = model * VertexProcessor::multByTranslation(Vector(0, -1, 0));
 
-    Vector4 transformedVertex1 = camera  * model * Vector4(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[0].z, 1.0f);
+    camera = camera * projectionMatrix * viewMatrix;
+    camera = camera * projectionMatrix;
+
+
+    Vector4 transformedVertex1 =  model * camera * Vector4(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[0].z, 1.0f);
     int x1 = (transformedVertex1.x + 1.0f) * width * 0.5f;
     int y1 = (transformedVertex1.y + 1.0f) * height * 0.5f;
 
-    Vector4 transformedVertex2 = camera  * model * Vector4(triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[1].z, 1.0f);
+    Vector4 transformedVertex2 = model * camera * Vector4(triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[1].z, 1.0f);
     int x2 = (transformedVertex2.x + 1.0f) * width * 0.5f;
     int y2 = (transformedVertex2.y + 1.0f) * height * 0.5f;
 
-    Vector4 transformedVertex3 = camera * model * Vector4(triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[2].z, 1.0f);
+    Vector4 transformedVertex3 = model * camera * Vector4(triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[2].z, 1.0f);
     int x3 = (transformedVertex3.x + 1.0f) * width * 0.5f;
     int y3 = (transformedVertex3.y + 1.0f) * height * 0.5f;
 

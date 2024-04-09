@@ -99,11 +99,13 @@ public:
         return *this;
     }
 
-    Vector4 operator*(const Vector4& vector) const {
+    Vector4 operator*(const Vector4& vec4) const {
         Vector4 result;
-        for (int i = 0; i < 4; ++i) {
-            result[i] = rows[i].Dot(vector);
-        }
+        result.x = vec4.x * rows[0].x + vec4.y * rows[1].x + vec4.z * rows[2].x + vec4.w * rows[3].x;
+        result.y = vec4.x * rows[0].y + vec4.y * rows[1].y + vec4.z * rows[2].y + vec4.w * rows[3].y;
+        result.z = vec4.x * rows[0].z + vec4.y * rows[1].z + vec4.z * rows[2].z + vec4.w * rows[3].z;
+        result.w = vec4.x * rows[0].w + vec4.y * rows[1].w + vec4.z * rows[2].w + vec4.w * rows[3].w;
+
         return result;
     }
 };
