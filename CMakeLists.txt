@@ -19,4 +19,4 @@ add_executable(algorytmy src/src/main.cpp
         src/src/Matrix4.cpp
         src/include/Matrix4.h
         src/src/VertexProcessor.cpp
-        src/include/VertexProcessor.h)
+        src/include/VertexProcessor.h src/include/Mesh.cpp src/include/Mesh.h src/include/Mesh.h src/include/Vertex.cpp src/include/Vertex.h src/include/Vertex.h src/include/Cone.cpp src/include/Cone.h)
