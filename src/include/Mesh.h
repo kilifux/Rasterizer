@@ -2,18 +2,23 @@
 #define ALGORYTMY_MESH_H
 
 #include "Vertex.h"
+#include "Vector.h"
+
+class Triangle;
 
 class Mesh {
 public:
     int vSize;
     int tSize;
 
-    unsigned int colors[3];
+    std::vector<unsigned int> colors;
 
-    Vertex* vertices;
-    Vector* indices;
+    std::vector<Vertex> vertices{};
+    std::vector<Vector> indices{};
 
-    Mesh() {};
+    Mesh() {}
+    virtual ~Mesh() {}
+
 };
 
 

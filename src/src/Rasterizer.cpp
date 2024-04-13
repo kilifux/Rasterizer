@@ -10,33 +10,50 @@ Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
 }
 
-void Rasterizer::Rasterize(Triangle &triangle, Matrix4 &model) {
+void Rasterizer::Rasterize(Mesh &mesh, Matrix4 &model) {
+    if (dynamic_cast<Triangle*>(&mesh) != nullptr) {
+        RenderTriangle(dynamic_cast<Triangle&>(mesh), model);
+    } else if (dynamic_cast<Cone*>(&mesh) != nullptr) {
+        RenderCone(dynamic_cast<Cone&>(mesh), model);
+    }
+}
+
+void Rasterizer::RenderCone(Cone &cone, Matrix4 &model) {
+
+    for (auto &triangle : cone.triangles)
+    {
+        RenderTriangle(triangle, model);
+    }
+}
+
+
+
+void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
 
     int width = tgaBuffer->GetWidth();
     int height = tgaBuffer->GetHeight();
 
-    Matrix4 viewMatrix = VertexProcessor::setLookAt({0, 0, 3}, {0, 0, 0}, {0, 1, 0});
+    Matrix4 viewMatrix = VertexProcessor::setLookAt({0, 1, 2}, {0, 0, 0}, {0, 1, 0});
 
-    // Przekształcenie do układu współrzędnych rzutowania
     Matrix4 projectionMatrix = VertexProcessor::setPerspective(120.f, 1.f, 0.01f, 100.f);
 
     Matrix4 camera =  Matrix4::Identity();
 
     camera = camera * projectionMatrix * viewMatrix;
 
-    Vector4 transformedVertex1 =  model * camera * Vector4(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[0].z, 1.0f);
+    Vector4 transformedVertex1 =  model * camera * Vector4(triangle.vertices[0].position.x, triangle.vertices[0].position.y, triangle.vertices[0].position.z, 1.0f);
     int x1 = (transformedVertex1.x + 1.0f) * width * 0.5f;
     int y1 = (transformedVertex1.y + 1.0f) * height * 0.5f;
 
-    Vector4 transformedVertex2 = model * camera * Vector4(triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[1].z, 1.0f);
+    Vector4 transformedVertex2 = model * camera * Vector4(triangle.vertices[1].position.x, triangle.vertices[1].position.y, triangle.vertices[1].position.z, 1.0f);
     int x2 = (transformedVertex2.x + 1.0f) * width * 0.5f;
     int y2 = (transformedVertex2.y + 1.0f) * height * 0.5f;
 
-    Vector4 transformedVertex3 = model * camera * Vector4(triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[2].z, 1.0f);
+    Vector4 transformedVertex3 = model * camera * Vector4(triangle.vertices[2].position.x, triangle.vertices[2].position.y, triangle.vertices[2].position.z, 1.0f);
     int x3 = (transformedVertex3.x + 1.0f) * width * 0.5f;
     int y3 = (transformedVertex3.y + 1.0f) * height * 0.5f;
 
-    int z1 = triangle.vertices[0].z, z2 = triangle.vertices[1].z, z3 = triangle.vertices[2].z;
+    int z1 = triangle.vertices[0].position.z, z2 = triangle.vertices[1].position.z, z3 = triangle.vertices[2].position.z;
 
     int minx = std::min({x1, x2, x3});
     int maxx = std::max({x1, x2, x3});

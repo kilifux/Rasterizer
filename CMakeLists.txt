@@ -13,10 +13,12 @@ add_executable(algorytmy src/src/main.cpp
         src/src/Vector.cpp
         src/include/Vector.h
         src/src/Triangle.cpp
-        src/src/Triangle.h
+        src/include/Triangle.h
         src/src/Vector4.cpp
         src/include/Vector4.h
         src/src/Matrix4.cpp
         src/include/Matrix4.h
         src/src/VertexProcessor.cpp
-        src/include/VertexProcessor.h src/include/Mesh.cpp src/include/Mesh.h src/include/Mesh.h src/include/Vertex.cpp src/include/Vertex.h src/include/Vertex.h src/include/Cone.cpp src/include/Cone.h)
+        src/include/VertexProcessor.h src/src/Mesh.cpp src/include/Mesh.h src/src/Vertex.cpp src/include/Vertex.h
+        src/src/Cone.cpp
+        src/include/Cone.h)
