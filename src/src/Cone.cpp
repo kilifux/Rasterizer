@@ -3,7 +3,7 @@
 constexpr float piOver180 = 0.017453292519943f;
 constexpr float twoPi = 6.283185307179586f;
 
-Cone::Cone(float radius, float height, int sectors, unsigned int color) {
+Cone::Cone(float radius, float height, int sectors) {
     float step = (360.f / static_cast<float>(sectors)) * piOver180;
 
     for (float angle = 0.0f; angle < twoPi; angle += step)
@@ -25,8 +25,4 @@ Cone::Cone(float radius, float height, int sectors, unsigned int color) {
 
 }
 
-Vector Cone::pOnCircle(float angle, float radius, Vector center) {
-    return { radius * std::cos(angle) + center.x,
-             center.y,
-             radius * std::sin(angle) + center.z };
-}
+

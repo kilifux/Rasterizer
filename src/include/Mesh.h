@@ -1,23 +1,24 @@
 #ifndef ALGORYTMY_MESH_H
 #define ALGORYTMY_MESH_H
 
+#include "Triangle.h"
 #include "Vertex.h"
 #include "Vector.h"
 
-class Triangle;
 
 class Mesh {
 public:
-    int vSize;
-    int tSize;
-
     std::vector<unsigned int> colors;
 
-    std::vector<Vertex> vertices{};
-    std::vector<Vector> indices{};
+    std::vector<Triangle> triangles;
+    std::vector<Vertex> vertices;
+    std::vector<Vector> indices;
 
-    Mesh() {}
-    virtual ~Mesh() {}
+    static Vector pOnCircle(float angle, float radius, Vector center = {0.0f, 0.0f, 0.0f});
+
+    virtual ~Mesh() = default;
+
+    virtual void Render(Triangle &triangle);
 
 };
 

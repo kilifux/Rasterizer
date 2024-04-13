@@ -21,4 +21,8 @@ add_executable(algorytmy src/src/main.cpp
         src/src/VertexProcessor.cpp
         src/include/VertexProcessor.h src/src/Mesh.cpp src/include/Mesh.h src/src/Vertex.cpp src/include/Vertex.h
         src/src/Cone.cpp
-        src/include/Cone.h)
+        src/include/Cone.h
+        src/src/Cylinder.cpp
+        src/include/Cylinder.h
+        src/src/Torus.cpp
+        src/include/Torus.h)

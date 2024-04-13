@@ -1,7 +1,6 @@
 #include "TGABuffer.h"
 #include "Vector.h"
 #include "Rasterizer.h"
-#include "Triangle.h"
 #include "Matrix4.h"
 #include "VertexProcessor.h"
 #include "Cone.h"
@@ -18,33 +17,29 @@ int main() {
 
     Rasterizer rasterizer(&tgaImg);
 
-    Matrix4 model = Matrix4::Identity();
-    model = model * VertexProcessor::multByScale(Vector(1, 1, 1));
-    model = model * VertexProcessor::multByRotation(-45.f, Vector(0, 0, 1));
-    model = model * VertexProcessor::multByTranslation(Vector(0.5, 1, 0));
+    Matrix4 modelCylinder = Matrix4::Identity();
+    modelCylinder = modelCylinder * VertexProcessor::multByScale(Vector(0.3, 0.3, 0.3));
+    modelCylinder = modelCylinder * VertexProcessor::multByRotation(-120.f, Vector(1, 0, 0));
+    modelCylinder = modelCylinder * VertexProcessor::multByTranslation(Vector(1, 1, 0));
 
+    Matrix4 modelCone = Matrix4::Identity();
+    modelCone = modelCone * VertexProcessor::multByScale(Vector(0.4, 0.4, 0.4));
+    modelCone = modelCone * VertexProcessor::multByRotation(30.f, Vector(1, 0, 0));
+    modelCone = modelCone * VertexProcessor::multByTranslation(Vector(-1.f, -1.5, 0));
 
-    Matrix4 model2 = Matrix4::Identity();
-    model2 = model2 * VertexProcessor::multByScale(Vector(0.5, 0.5, 0.5));
-    model2 = model2 * VertexProcessor::multByRotation(-45.f, Vector(0, 0, 1));
-    model2 = model2 * VertexProcessor::multByTranslation(Vector(-1.f, -0.5, 0));
+    Matrix4 modelTorus = Matrix4::Identity();
+    modelTorus = modelTorus * VertexProcessor::multByScale(Vector(0.2, 0.2, 0.2));
+    modelTorus = modelTorus * VertexProcessor::multByRotation(-120.f, Vector(1, 1, 0));
+    modelTorus = modelTorus * VertexProcessor::multByTranslation(Vector(-1.f, .7, 0));
 
+    Torus torus(2, 1, 14, 8);
+    rasterizer.Rasterize(torus, modelTorus);
 
-    Vertex vertex1(Vector(0.9f, -0.5f, -1.0f), Vector(0, 1, 0));
-    Vertex vertex2(Vector(0.0f, -0.5f, -1.0f), Vector(0, 1, 0));
-    Vertex vertex3(Vector(0.0f, 0.5f, 0.0f), Vector(0, 1, 0));
+    Cylinder cylinder(2, 3, 12, 5);
+    rasterizer.Rasterize(cylinder, modelCylinder);
 
-    //Glebokosc depth (tym bardziej na minusie tym bliżej kamery)
-    Triangle triangle(vertex1, vertex2, vertex3);    //zielony
-    Triangle triangle2(vertex1, vertex2, vertex3, 0xFFBBBBBB, 0xFFDDAAFF, 0xFFDDAAFF);    //różowy
-
-   // rasterizer.Rasterize(triangle, model);
-  //  rasterizer.Rasterize(triangle2, model2);
-
-
-    Cone cone(2, 2, 8, 0xFFbbbbbb);
-    rasterizer.Rasterize(cone, model2);
-
+    Cone cone(2, 2, 12);
+    rasterizer.Rasterize(cone, modelCone);
 
     if (!tgaImg.WriteTGA("test.tga"))
         return -1;

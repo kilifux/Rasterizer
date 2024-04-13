@@ -3,6 +3,8 @@
 
 #include "Mesh.h"
 #include "Cone.h"
+#include "Cylinder.h"
+#include "Torus.h"
 
 class TGABuffer;
 class Vector;
@@ -18,6 +20,9 @@ public:
     void Rasterize(Mesh &mesh, Matrix4 &model);
     void RenderTriangle(Triangle &triangle, Matrix4 &model);
     void RenderCone(Cone &cone, Matrix4 &model);
+
+    void RenderCylinder(Cylinder &cylinder, Matrix4 &model);
+    void RenderTorus(Torus &torus, Matrix4 &model);
 };
 
 

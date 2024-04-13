@@ -5,35 +5,26 @@
 #include "Triangle.h"
 #include <iostream>
 #include "VertexProcessor.h"
+#include "Cylinder.h"
 
 Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
 }
 
 void Rasterizer::Rasterize(Mesh &mesh, Matrix4 &model) {
-    if (dynamic_cast<Triangle*>(&mesh) != nullptr) {
-        RenderTriangle(dynamic_cast<Triangle&>(mesh), model);
-    } else if (dynamic_cast<Cone*>(&mesh) != nullptr) {
-        RenderCone(dynamic_cast<Cone&>(mesh), model);
-    }
-}
 
-void Rasterizer::RenderCone(Cone &cone, Matrix4 &model) {
-
-    for (auto &triangle : cone.triangles)
+    for (auto &triangle : mesh.triangles)
     {
         RenderTriangle(triangle, model);
     }
 }
-
-
 
 void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
 
     int width = tgaBuffer->GetWidth();
     int height = tgaBuffer->GetHeight();
 
-    Matrix4 viewMatrix = VertexProcessor::setLookAt({0, 1, 2}, {0, 0, 0}, {0, 1, 0});
+    Matrix4 viewMatrix = VertexProcessor::setLookAt({0, 1, 2}, {0, 2, 0}, {0, 1, 0});
 
     Matrix4 projectionMatrix = VertexProcessor::setPerspective(120.f, 1.f, 0.01f, 100.f);
 
@@ -111,3 +102,7 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
         }
     }
 }
+
+
+
+
