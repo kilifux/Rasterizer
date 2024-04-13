@@ -17,9 +17,6 @@ public:
     static Vector pOnCircle(float angle, float radius, Vector center = {0.0f, 0.0f, 0.0f});
 
     virtual ~Mesh() = default;
-
-    virtual void Render(Triangle &triangle);
-
 };
 
 

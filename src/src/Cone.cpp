@@ -19,8 +19,8 @@ Cone::Cone(float radius, float height, int sectors) {
         Vertex vertex5(Vector(0.0f, 0.0f, 0.0f), Vector(0, 1, 0));
         Vertex vertex6(p1, Vector(0, 1, 0));
 
-        triangles.emplace_back(vertex1, vertex2, vertex3, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
-        triangles.emplace_back(vertex4, vertex5, vertex6, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
+        triangles.emplace_back(vertex1, vertex2, vertex3);
+        triangles.emplace_back(vertex4, vertex5, vertex6);
     }
 
 }

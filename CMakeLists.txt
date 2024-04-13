@@ -25,4 +25,10 @@ add_executable(algorytmy src/src/main.cpp
         src/src/Cylinder.cpp
         src/include/Cylinder.h
         src/src/Torus.cpp
-        src/include/Torus.h)
+        src/include/Torus.h
+        src/src/Light.cpp
+        src/include/Light.h
+        src/src/DirectionalLight.cpp
+        src/include/DirectionalLight.h
+        src/src/PointLight.cpp
+        src/include/PointLight.h)

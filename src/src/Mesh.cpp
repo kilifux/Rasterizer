@@ -6,7 +6,3 @@ Vector Mesh::pOnCircle(float angle, float radius, Vector center) {
              radius * std::sin(angle) + center.z };
 }
 
-void Mesh::Render(Triangle &triangle) {
-
-
-}
