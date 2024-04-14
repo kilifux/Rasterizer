@@ -14,15 +14,15 @@ Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
 }
 
-void Rasterizer::Rasterize(Mesh &mesh, Matrix4 &model) {
+void Rasterizer::Rasterize(Mesh &mesh, Matrix4 &model, bool lightPixel) {
 
     for (auto &triangle : mesh.triangles)
     {
-        RenderTriangle(triangle, model);
+        RenderTriangle(triangle, model, lightPixel);
     }
 }
 
-void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
+void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model, bool lightPixel) {
 
     int width = tgaBuffer->GetWidth();
     int height = tgaBuffer->GetHeight();
@@ -88,6 +88,27 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
                 float bar2 = ((dy31) * (x - x3) + (dx13) * (y - y3)) / ((dy31) * (dx23) + (dx13) * (dy23));
                 float bar3 = 1.f - bar1 - bar2;
 
+
+                Vector interpolatedNormal = (triangle.vertices[0].normal * bar1 + triangle.vertices[1].normal * bar2 + triangle.vertices[2].normal * bar3).Normalize();
+                Vector interpolatedPosition = Vector(triangle.vertices[0].position.x * bar1 + triangle.vertices[1].position.x * bar2 + triangle.vertices[2].position.x * bar3,
+                                                     triangle.vertices[0].position.y * bar1 + triangle.vertices[1].position.y * bar2 + triangle.vertices[2].position.y * bar3,
+                                                     triangle.vertices[0].position.z * bar1 + triangle.vertices[1].position.z * bar2 + triangle.vertices[2].position.z * bar3);
+
+                Vector cameraPosition{0, 0, 0};
+
+                if (lightPixel)
+                {
+                    Vector lightingColor = CalculatePixelLighting(interpolatedNormal, interpolatedPosition, cameraPosition);
+
+                    float depth = bar1 * z1 + bar2 * z2 + bar3 * z3;
+                    if (depth < tgaBuffer->GetDepth()[y * width + x])
+                    {
+                        tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(lightingColor);
+                        tgaBuffer->GetDepth()[y * width + x] = depth;
+                    }
+                }
+                else {
+
                 for (auto& vertex : triangle.vertices)
                 {
                     CalculateLighting(vertex);
@@ -96,20 +117,59 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
                 Vector color1 = Vector::ToVector(triangle.vertices[0].color);
                 Vector color2 = Vector::ToVector(triangle.vertices[1].color);
                 Vector color3 = Vector::ToVector(triangle.vertices[2].color);
-
                 Vector color =  color1 * bar1 + color2 * bar2 + color3 * bar3;
                 float depth = bar1 * z1 + bar2 * z2 + bar3 * z3;
-                if (depth    < tgaBuffer->GetDepth()[y * width + x])
+
+                if (depth < tgaBuffer->GetDepth()[y * width + x])
                 {
                     tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color);
                     tgaBuffer->GetDepth()[y * width + x] = depth;
                 }
 
-
+                }
             }
         }
     }
 }
+
+
+Vector Rasterizer::CalculatePixelLighting(Vector& normal, const Vector& position, const Vector& cameraPosition) {
+    Vector lightingColor(0.0f, 0.0f, 0.0f);
+
+    for (auto& light : sceneLights) {
+        Vector lightDirection;
+        float attenuationFactor = 1.0f; // Faktor tłumienia, może być dostosowany do odległości od światła
+
+        if (dynamic_cast<DirectionalLight*>(light) != nullptr) {
+            lightDirection = -dynamic_cast<DirectionalLight*>(light)->direction; // Kierunek światła jest przeciwny do kierunku światła kierunkowego
+        } else if (dynamic_cast<PointLight*>(light) != nullptr) {
+            lightDirection = (dynamic_cast<PointLight*>(light)->position - position).Normalize(); // Kierunek do punktowego światła
+            // Tutaj możesz dodać obliczanie tłumienia na podstawie odległości od światła punktowego
+        }
+
+        // Oblicz składowe oświetlenia
+        Vector ambientComponent = light->ambient;
+        float diffuseIntensity = std::max(0.0f,  normal.dotProduct(lightDirection));
+        Vector diffuseComponent = light->diffuse * diffuseIntensity;
+
+        Vector viewDirection = (cameraPosition - position).Normalize();
+        Vector halfwayDirection = (lightDirection + viewDirection).Normalize();
+        float specularIntensity = std::pow(std::max(0.0f, normal.dotProduct(halfwayDirection)), light->shininess);
+        Vector specularComponent = light->specular * specularIntensity;
+
+        // Dodaj składowe oświetlenia do koloru oświetlenia punktu
+        lightingColor = lightingColor + ambientComponent + (diffuseComponent + specularComponent) * attenuationFactor;
+    }
+
+    // Ogranicz wartości koloru do zakresu [0, 1]
+    lightingColor.x = std::min(1.0f, std::max(0.0f, lightingColor.x));
+    lightingColor.y = std::min(1.0f, std::max(0.0f, lightingColor.y));
+    lightingColor.z = std::min(1.0f, std::max(0.0f, lightingColor.z));
+
+    return lightingColor;
+}
+
+
 
 void Rasterizer::CalculateLighting(Vertex &vertex) {
     Vector lightingColor(0.0f, 0.0f, 0.0f);
@@ -128,7 +188,7 @@ void Rasterizer::CalculateLighting(Vertex &vertex) {
             lightDirection = (dynamic_cast<PointLight*>(light)->position - vertex.position).Normalize();
         } else if (dynamic_cast<DirectionalLight*>(light) != nullptr) {
             // Jeśli światło kierunkowe, używamy jego kierunku jako wektora do światła
-            lightDirection = dynamic_cast<DirectionalLight*>(light)->direction;
+            lightDirection = -dynamic_cast<DirectionalLight*>(light)->direction;
         }
 
         // Obliczamy składowe oświetlenia

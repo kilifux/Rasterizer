@@ -31,4 +31,6 @@ add_executable(algorytmy src/src/main.cpp
         src/src/DirectionalLight.cpp
         src/include/DirectionalLight.h
         src/src/PointLight.cpp
-        src/include/PointLight.h)
+        src/include/PointLight.h
+        src/src/Sphere.cpp
+        src/include/Sphere.h)

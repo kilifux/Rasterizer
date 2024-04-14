@@ -19,10 +19,12 @@ public:
     std::vector<Light*> sceneLights;
     Rasterizer(TGABuffer* buffer);
 
-    void Rasterize(Mesh &mesh, Matrix4 &model);
-    void RenderTriangle(Triangle &triangle, Matrix4 &model);
+    void Rasterize(Mesh &mesh, Matrix4 &model, bool lightPixel);
+    void RenderTriangle(Triangle &triangle, Matrix4 &model, bool lightPixel);
 
     void CalculateLighting(Vertex &vertex);
+
+    Vector CalculatePixelLighting(Vector &normal, const Vector &position, const Vector &cameraPosition);
 };
 
 
