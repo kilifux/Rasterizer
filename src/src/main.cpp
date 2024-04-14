@@ -4,6 +4,8 @@
 #include "Matrix4.h"
 #include "VertexProcessor.h"
 #include "Cone.h"
+#include "PointLight.h"
+#include "DirectionalLight.h"
 
 
 int main() {
@@ -16,6 +18,12 @@ int main() {
     tgaImg.ClearDepth(std::numeric_limits<float>::max());
 
     Rasterizer rasterizer(&tgaImg);
+
+    DirectionalLight directionalLight;
+    rasterizer.sceneLights.push_back(&directionalLight);
+
+    PointLight pointLight;
+    //rasterizer.sceneLights.push_back(&pointLight);
 
     Matrix4 modelCylinder = Matrix4::Identity();
     modelCylinder = modelCylinder * VertexProcessor::multByScale(Vector(0.3, 0.3, 0.3));
@@ -32,13 +40,13 @@ int main() {
     modelTorus = modelTorus * VertexProcessor::multByRotation(-120.f, Vector(1, 1, 0));
     modelTorus = modelTorus * VertexProcessor::multByTranslation(Vector(-1.f, .7, 0));
 
-    Torus torus(2, 1, 14, 8);
+    Torus torus(2, 1, 10, 5);
     rasterizer.Rasterize(torus, modelTorus);
 
     Cylinder cylinder(2, 3, 12, 5);
     rasterizer.Rasterize(cylinder, modelCylinder);
 
-    Cone cone(2, 2, 12);
+    Cone cone(2, 2, 14);
     rasterizer.Rasterize(cone, modelCone);
 
     if (!tgaImg.WriteTGA("test.tga"))

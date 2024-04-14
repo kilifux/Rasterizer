@@ -8,9 +8,9 @@ Triangle::Triangle(const Vertex &vertex1, const Vertex &vertex2, const Vertex &v
 
     indices.push_back(Vector(0, 1 , 2));
 
-    colors.push_back(0xFFFF0000);
-    colors.push_back(0xFF00FF00);
-    colors.push_back(0xFF0000FF);
+    colors.push_back(vertex1.color);
+    colors.push_back(vertex2.color);
+    colors.push_back(vertex3.color);
 
 }
 
@@ -21,9 +21,9 @@ Triangle::Triangle(const Vertex &vertex1, const Vertex &vertex2, const Vertex &v
     vertices.push_back(vertex2);
     vertices.push_back(vertex3);
 
-    colors.push_back(color1);
-    colors.push_back(color2);
-    colors.push_back(color3);
+    colors.push_back(vertex1.color);
+    colors.push_back(vertex2.color);
+    colors.push_back(vertex3.color);
 
     indices.push_back(Vector(0, 1 , 2));
 

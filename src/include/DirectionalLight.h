@@ -5,7 +5,10 @@
 #include "Light.h"
 
 class DirectionalLight : public Light {
+public:
+    Vector direction;
 
+    DirectionalLight() : Light(), direction(Vector(-0.1f, -1.f, 1.f).Normalize()) {}
 };
 
 

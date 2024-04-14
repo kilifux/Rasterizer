@@ -4,8 +4,11 @@
 #include <algorithm>
 #include "Triangle.h"
 #include <iostream>
+#include "Light.h"
 #include "VertexProcessor.h"
 #include "Cylinder.h"
+#include "PointLight.h"
+#include "DirectionalLight.h"
 
 Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
@@ -85,9 +88,14 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
                 float bar2 = ((dy31) * (x - x3) + (dx13) * (y - y3)) / ((dy31) * (dx23) + (dx13) * (dy23));
                 float bar3 = 1.f - bar1 - bar2;
 
-                Vector color1 = Vector::ToVector(triangle.colors[0]);
-                Vector color2 = Vector::ToVector(triangle.colors[1]);
-                Vector color3 = Vector::ToVector(triangle.colors[2]);
+                for (auto& vertex : triangle.vertices)
+                {
+                    CalculateLighting(vertex);
+                }
+
+                Vector color1 = Vector::ToVector(triangle.vertices[0].color);
+                Vector color2 = Vector::ToVector(triangle.vertices[1].color);
+                Vector color3 = Vector::ToVector(triangle.vertices[2].color);
 
                 Vector color =  color1 * bar1 + color2 * bar2 + color3 * bar3;
                 float depth = bar1 * z1 + bar2 * z2 + bar3 * z3;
@@ -102,6 +110,53 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model) {
         }
     }
 }
+
+void Rasterizer::CalculateLighting(Vertex &vertex) {
+    Vector lightingColor(0.0f, 0.0f, 0.0f);
+    Vector cameraPosition{0, 0, 0};
+
+    // Iterujemy przez wszystkie światła na scenie
+    for (auto& light : sceneLights) {
+        // Obliczamy wektor normalny w lokalnym układzie współrzędnych
+        Vector localNormal = vertex.normal;
+
+        // Obliczamy wektor do światła
+        Vector lightDirection;
+
+        if (dynamic_cast<PointLight*>(light) != nullptr) {
+            // Jeśli światło punktowe, obliczamy wektor do światła
+            lightDirection = (dynamic_cast<PointLight*>(light)->position - vertex.position).Normalize();
+        } else if (dynamic_cast<DirectionalLight*>(light) != nullptr) {
+            // Jeśli światło kierunkowe, używamy jego kierunku jako wektora do światła
+            lightDirection = dynamic_cast<DirectionalLight*>(light)->direction;
+        }
+
+        // Obliczamy składowe oświetlenia
+        Vector ambientComponent = light->ambient;
+        Vector diffuseComponent = light->diffuse * std::max(0.0f, localNormal.dotProduct(lightDirection));
+        Vector specularComponent(0.0f, 0.0f, 0.0f);
+
+        if (localNormal.dotProduct(lightDirection) > 0) {
+            // Obliczamy składową odbicia światła tylko jeśli światło jest padające na powierzchnię
+            Vector viewDirection = (cameraPosition - vertex.position).Normalize();
+            Vector halfwayDirection = (lightDirection + viewDirection).Normalize();
+            float specularFactor = std::pow(std::max(0.0f, localNormal.dotProduct(halfwayDirection)), light->shininess);
+            specularComponent = light->specular * specularFactor;
+        }
+
+        // Dodajemy składowe oświetlenia od tego światła do ogólnego koloru oświetlenia wierzchołka
+        lightingColor = lightingColor + ambientComponent + diffuseComponent + specularComponent;
+    }
+
+    // Ograniczenie wartości koloru do zakresu [0, 1]
+    lightingColor.x = std::min(1.0f, std::max(0.0f, lightingColor.x));
+    lightingColor.y = std::min(1.0f, std::max(0.0f, lightingColor.y));
+    lightingColor.z = std::min(1.0f, std::max(0.0f, lightingColor.z));
+
+    // Aktualizacja koloru wierzchołka
+    vertex.color = Vector::ToColor(lightingColor);
+}
+
 
 
 

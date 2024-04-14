@@ -5,6 +5,7 @@
 #include "Cone.h"
 #include "Cylinder.h"
 #include "Torus.h"
+#include "Light.h"
 
 class TGABuffer;
 class Vector;
@@ -15,14 +16,13 @@ class Rasterizer {
     TGABuffer* tgaBuffer;
 
 public:
+    std::vector<Light*> sceneLights;
     Rasterizer(TGABuffer* buffer);
 
     void Rasterize(Mesh &mesh, Matrix4 &model);
     void RenderTriangle(Triangle &triangle, Matrix4 &model);
-    void RenderCone(Cone &cone, Matrix4 &model);
 
-    void RenderCylinder(Cylinder &cylinder, Matrix4 &model);
-    void RenderTorus(Torus &torus, Matrix4 &model);
+    void CalculateLighting(Vertex &vertex);
 };
 
 
