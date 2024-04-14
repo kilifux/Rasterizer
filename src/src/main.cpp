@@ -7,6 +7,7 @@
 #include "PointLight.h"
 #include "DirectionalLight.h"
 #include "Sphere.h"
+#include "SpotLight.h"
 
 
 int main() {
@@ -26,31 +27,34 @@ int main() {
     PointLight pointLight;
     //rasterizer.sceneLights.push_back(&pointLight);
 
+    SpotLight spotLight;
+    //rasterizer.sceneLights.push_back(&spotLight);
+
     Matrix4 modelCylinder = Matrix4::Identity();
-    modelCylinder = modelCylinder * VertexProcessor::multByScale(Vector(0.3, 0.3, 0.3));
-    modelCylinder = modelCylinder * VertexProcessor::multByRotation(-60.f, Vector(1, 0, 0));
-    modelCylinder = modelCylinder * VertexProcessor::multByTranslation(Vector(1, 1, 0));
+    modelCylinder = modelCylinder * VertexProcessor::multByScale(Vector(0.2, 0.2, 0.2));
+    modelCylinder = modelCylinder * VertexProcessor::multByRotation(0.f, Vector(1, 0, 0));
+    modelCylinder = modelCylinder * VertexProcessor::multByTranslation(Vector(1, 0, 0));
 
     Matrix4 modelCone = Matrix4::Identity();
-    modelCone = modelCone * VertexProcessor::multByScale(Vector(0.4, 0.4, 0.4));
+    modelCone = modelCone * VertexProcessor::multByScale(Vector(0.2, 0.2, 0.2));
     modelCone = modelCone * VertexProcessor::multByRotation(45.f, Vector(1, 0, 0));
-    modelCone = modelCone * VertexProcessor::multByTranslation(Vector(-1.f, -1.5, 0));
+    modelCone = modelCone * VertexProcessor::multByTranslation(Vector(-1.f, -0.5, 0));
 
     Matrix4 modelTorus = Matrix4::Identity();
-    modelTorus = modelTorus * VertexProcessor::multByScale(Vector(0.2, 0.2, 0.2));
-    modelTorus = modelTorus * VertexProcessor::multByRotation(-120.f, Vector(1, 1, 0));
-    modelTorus = modelTorus * VertexProcessor::multByTranslation(Vector(-1.f, .7, 0));
+    modelTorus = modelTorus * VertexProcessor::multByScale(Vector(0.15, 0.15, 0.15));
+    modelTorus = modelTorus * VertexProcessor::multByRotation(0.f, Vector(1, 1, 0));
+    modelTorus = modelTorus * VertexProcessor::multByTranslation(Vector(0.f, 0, 0));
 
     Torus torus(2, 1, 10, 5);
-    rasterizer.Rasterize(torus, modelTorus, true);
+    rasterizer.Rasterize(torus, modelTorus, false);
 
-    Sphere sphere(2, 6, 6);
+    Sphere sphere(2, 4, 4);
     rasterizer.Rasterize(sphere, modelCylinder, false);
     //Cylinder cylinder(2, 3, 12, 5);
     //rasterizer.Rasterize(cylinder, modelCylinder, true);
 
     Cone cone(2, 2, 14);
-    rasterizer.Rasterize(cone, modelCone, true);
+    rasterizer.Rasterize(cone, modelCone, false);
 
     if (!tgaImg.WriteTGA("test.tga"))
         return -1;

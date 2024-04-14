@@ -12,7 +12,7 @@ public:
 
     static std::vector<Light> sceneLights;
 
-    Light() : ambient(0.4f, 0.2f, 0.8f), diffuse(0.4f, 0.4f, 0.4f), specular(0.2f, 0.2f, 0.2f) {}
+    Light() : ambient(0.45f, 0.2f, 0.8f), diffuse(0.5f, 0.5f, 0.5f), specular(0.5, 0.5f, 0.5f) {}
 
     virtual ~Light() = default;
 };

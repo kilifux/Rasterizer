@@ -17,11 +17,11 @@ public:
     }
 
     Vector calculateNormal(const Vector &point, float majorRadius, float minorRadius) {
-        float norm = std::sqrt(point.x * point.x + point.y * point.y);
         Vector normal;
-        normal.x = (point.x * majorRadius) / norm;
-        normal.y = (point.y * majorRadius) / norm;
-        normal.z = (point.z * minorRadius) / norm;
+        float norm = std::sqrt(point.x * point.x + point.y * point.y);
+        normal.x = point.x / norm;
+        normal.y = point.y / norm;
+        normal.z = point.z / minorRadius;
         return normal;
     }
 

@@ -9,6 +9,7 @@
 #include "Cylinder.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
+#include "SpotLight.h"
 
 Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
@@ -145,6 +146,13 @@ Vector Rasterizer::CalculatePixelLighting(Vector& normal, const Vector& position
         } else if (dynamic_cast<PointLight*>(light) != nullptr) {
             lightDirection = (dynamic_cast<PointLight*>(light)->position - position).Normalize(); // Kierunek do punktowego światła
             // Tutaj możesz dodać obliczanie tłumienia na podstawie odległości od światła punktowego
+        } else if (auto spotLight = dynamic_cast<SpotLight*>(light)) {
+            lightDirection = (spotLight->position - position).Normalize(); // Kierunek do reflektora
+            float angle = std::acos(normal.dotProduct(lightDirection));
+            float cutoffRadians = spotLight->cutoff * (M_PI / 180.0f); // Konwersja kąta odcięcia na radiany
+            if (angle > cutoffRadians) {
+                attenuationFactor = 0.0f; // Światło reflektorowe nie oświetla tego piksela, jeśli znajduje się poza kątem odcięcia
+            }
         }
 
         // Oblicz składowe oświetlenia
@@ -189,6 +197,14 @@ void Rasterizer::CalculateLighting(Vertex &vertex) {
         } else if (dynamic_cast<DirectionalLight*>(light) != nullptr) {
             // Jeśli światło kierunkowe, używamy jego kierunku jako wektora do światła
             lightDirection = -dynamic_cast<DirectionalLight*>(light)->direction;
+        } else if (auto spotLight = dynamic_cast<SpotLight*>(light)) {
+            // Jeśli światło reflektorowe, obliczamy wektor do reflektora
+            lightDirection = (spotLight->position - vertex.position).Normalize();
+            float angle = std::acos(localNormal.dotProduct(lightDirection));
+            float cutoffRadians = spotLight->cutoff * (M_PI / 180.0f); // Konwersja kąta odcięcia na radiany
+            if (angle > cutoffRadians) {
+                continue; // Światło reflektorowe nie oświetla tego wierzchołka, jeśli znajduje się poza kątem odcięcia
+            }
         }
 
         // Obliczamy składowe oświetlenia
