@@ -18,10 +18,18 @@ public:
 
     Vector calculateNormal(const Vector &point, float majorRadius, float minorRadius) {
         Vector normal;
+
+        // Obliczamy odległość punktu od środka torusa
         float norm = std::sqrt(point.x * point.x + point.y * point.y);
+
+        // Obliczamy składowe normalnej
         normal.x = point.x / norm;
         normal.y = point.y / norm;
         normal.z = point.z / minorRadius;
+
+        // Normalizujemy wektor normalny
+        normal.Normalize();
+
         return normal;
     }
 

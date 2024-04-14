@@ -156,7 +156,7 @@ Vector Rasterizer::CalculatePixelLighting(Vector& normal, const Vector& position
         }
 
         // Oblicz składowe oświetlenia
-        Vector ambientComponent = light->ambient;
+        Vector ambientComponent = light->ambient / sceneLights.size();
         float diffuseIntensity = std::max(0.0f,  normal.dotProduct(lightDirection));
         Vector diffuseComponent = light->diffuse * diffuseIntensity;
 
@@ -208,7 +208,7 @@ void Rasterizer::CalculateLighting(Vertex &vertex) {
         }
 
         // Obliczamy składowe oświetlenia
-        Vector ambientComponent = light->ambient;
+        Vector ambientComponent = light->ambient / sceneLights.size();
         Vector diffuseComponent = light->diffuse * std::max(0.0f, localNormal.dotProduct(lightDirection));
         Vector specularComponent(0.0f, 0.0f, 0.0f);
 

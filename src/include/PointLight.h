@@ -8,7 +8,7 @@ class PointLight : public Light{
 public:
     Vector position;
 
-    PointLight() : Light(), position(Vector(0.0, -5, 0)) {}
+    PointLight() : Light(), position(Vector(2.0, -5, 0)) {}
 };
 
 
