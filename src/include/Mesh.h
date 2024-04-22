@@ -13,6 +13,7 @@ public:
     std::vector<Triangle> triangles;
     std::vector<Vertex> vertices;
     std::vector<Vector> indices;
+    std::vector<Vector2> textures;
 
     static Vector pOnCircle(float angle, float radius, Vector center = {0.0f, 0.0f, 0.0f});
 

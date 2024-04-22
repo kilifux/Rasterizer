@@ -21,6 +21,10 @@ public:
 
     unsigned int GetWidth() const { return width; }
     unsigned int GetHeight() const {return height; }
+
+    bool OpenTGA(const char *filename);
+
+    unsigned int GetColor(int index);
 };
 
 

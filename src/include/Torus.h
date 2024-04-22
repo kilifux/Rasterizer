@@ -19,20 +19,26 @@ public:
     Vector calculateNormal(const Vector &point, float majorRadius, float minorRadius) {
         Vector normal;
 
-        // Obliczamy odległość punktu od środka torusa
         float norm = std::sqrt(point.x * point.x + point.y * point.y);
 
-        // Obliczamy składowe normalnej
         normal.x = point.x / norm;
         normal.y = point.y / norm;
         normal.z = point.z / minorRadius;
 
-        // Normalizujemy wektor normalny
         normal.Normalize();
 
         return normal;
     }
 
+    Vector2 CalculateTextureCoordinates(float majorAngle, float minorAngle, int textureWidth, int textureHeight) {
+        float u = majorAngle / (2 * M_PI);
+        float v = minorAngle / (2 * M_PI);
+
+        u /= textureWidth;
+        v /= textureHeight;
+
+        return Vector2(u, v);
+    }
 };
 
 

@@ -16,13 +16,23 @@ Torus::Torus(float majorRadius, float minorRadius, int majorSegments, int minorS
             Vector p3 = calculateTorusPoint(majorRadius, minorRadius, majorAngle2, minorAngle2);
             Vector p4 = calculateTorusPoint(majorRadius, minorRadius, majorAngle2, minorAngle1);
 
-            Vertex v1 = {p1, calculateNormal(p1, majorRadius, minorRadius),0xFFFF0000};
-            Vertex v2 = {p2, calculateNormal(p2, majorRadius, minorRadius), 0xFF00FF00};
-            Vertex v3 = {p3, calculateNormal(p3, majorRadius, minorRadius), 0xFF0000FF};
-            Vertex v4 = {p4, calculateNormal(p4, majorRadius, minorRadius), 0xFF00FF00};
+            Vertex v1 = {p1, calculateNormal(p1, majorRadius, minorRadius)};
+            Vertex v2 = {p2, calculateNormal(p2, majorRadius, minorRadius)};
+            Vertex v3 = {p3, calculateNormal(p3, majorRadius, minorRadius)};
+            Vertex v4 = {p4, calculateNormal(p4, majorRadius, minorRadius)};
 
-            triangles.emplace_back(v1, v2, v3);
-            triangles.emplace_back(v1, v3, v4);
+            int textureWidth = 1;
+            int textureHeight = 1;
+
+            Vector2 t1 = CalculateTextureCoordinates(majorAngle1, minorAngle1, textureWidth, textureHeight);
+            Vector2 t2 = CalculateTextureCoordinates(majorAngle1, minorAngle2, textureWidth, textureHeight);
+            Vector2 t3 = CalculateTextureCoordinates(majorAngle2, minorAngle2, textureWidth, textureHeight);
+            Vector2 t4 = CalculateTextureCoordinates(majorAngle2, minorAngle1, textureWidth, textureHeight);
+
+           triangles.emplace_back(v1, v2, v3, t1, t2, t3);
+           triangles.emplace_back(v1, v3, v4, t1, t3, t4);
         }
     }
 }
+
+

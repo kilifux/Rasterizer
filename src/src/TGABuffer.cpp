@@ -23,6 +23,11 @@ void TGABuffer::ClearDepth(float value) {
     }
 }
 
+unsigned int TGABuffer::GetColor(int index)
+{
+    return colorBuffer[index];
+}
+
 bool TGABuffer::WriteTGA(const char* fileName) {
     unsigned short header[9] = {
             0x0000, 0x0002, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -42,6 +47,29 @@ bool TGABuffer::WriteTGA(const char* fileName) {
 
 
     fclose(file);
+
+    return true;
+}
+
+
+bool TGABuffer::OpenTGA(const char* filename)
+{
+    unsigned short header[9] = {
+            0x0000, 0x0002, 0x0000, 0x0000, 0x0000, 0x0000,
+            0x0100, 0x0100,
+            0x0820 };
+
+    FILE* f = fopen(filename, "rb");
+    if (NULL == f) return false;
+
+    fread(header, 2, 9, f);
+
+    width = header[6];
+    height = header[7];
+
+    colorBuffer = new unsigned int[width * height];
+
+    fread(colorBuffer, 4, width * height, f);
 
     return true;
 }

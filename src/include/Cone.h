@@ -9,6 +9,7 @@ public:
 
     Cone( float radius, float height, int sectors);
 
+    Vector2 CalculateTextureCoordinates(float x, float y, float z, float height);
 };
 
 

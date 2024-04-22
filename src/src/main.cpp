@@ -15,6 +15,8 @@ int main() {
     unsigned int height = 600;
 
     TGABuffer tgaImg(width, height);
+    TGABuffer tgaImgLoadBrick(width, height);
+    TGABuffer tgaImgLoadEarth(width, height);
 
     tgaImg.ClearColor(0xFF8888FF); // ARGB
     tgaImg.ClearDepth(std::numeric_limits<float>::max());
@@ -22,13 +24,13 @@ int main() {
     Rasterizer rasterizer(&tgaImg);
 
     DirectionalLight directionalLight;
-    //rasterizer.sceneLights.push_back(&directionalLight);
+    rasterizer.sceneLights.push_back(&directionalLight);
 
     PointLight pointLight;
-    rasterizer.sceneLights.push_back(&pointLight);
+    //rasterizer.sceneLights.push_back(&pointLight);
 
     SpotLight spotLight;
-    rasterizer.sceneLights.push_back(&spotLight);
+    //rasterizer.sceneLights.push_back(&spotLight);
 
     Matrix4 modelCylinder = Matrix4::Identity();
     modelCylinder = modelCylinder * VertexProcessor::multByScale(Vector(0.2, 0.2, 0.2));
@@ -45,16 +47,22 @@ int main() {
     modelTorus = modelTorus * VertexProcessor::multByRotation(0.f, Vector(1, 1, 0));
     modelTorus = modelTorus * VertexProcessor::multByTranslation(Vector(0.f, 0, 0));
 
-    Torus torus(2, 1, 14, 8);
-    rasterizer.Rasterize(torus, modelTorus, true);
 
-    Sphere sphere(2, 12, 12);
-    rasterizer.Rasterize(sphere, modelCylinder, true);
-    //Cylinder cylinder(2, 3, 12, 5);
-    //rasterizer.Rasterize(cylinder, modelCylinder, true);
+
+    if (!tgaImgLoadBrick.OpenTGA("Brick.tga"))
+        return -1;
+
+    if (!tgaImgLoadEarth.OpenTGA("earth.tga"))
+        return -1;
+
+    Torus torus(2, 1, 14, 8);
+    rasterizer.Rasterize(torus, modelTorus, true, &tgaImgLoadBrick, true);
+
+    Sphere sphere(2, 14, 14);
+    rasterizer.Rasterize(sphere, modelCylinder, true, &tgaImgLoadBrick);
 
     Cone cone(2, 2, 14);
-    rasterizer.Rasterize(cone, modelCone, true);
+    rasterizer.Rasterize(cone, modelCone, true, &tgaImgLoadEarth);
 
     if (!tgaImg.WriteTGA("test.tga"))
         return -1;

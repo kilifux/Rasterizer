@@ -15,15 +15,15 @@ Rasterizer::Rasterizer(TGABuffer *buffer) {
     tgaBuffer = buffer;
 }
 
-void Rasterizer::Rasterize(Mesh &mesh, Matrix4 &model, bool lightPixel) {
+void Rasterizer::Rasterize(Mesh &mesh, Matrix4 &model, bool lightPixel, TGABuffer *tBuffer, bool Lit) {
 
     for (auto &triangle : mesh.triangles)
     {
-        RenderTriangle(triangle, model, lightPixel);
+        RenderTriangle(triangle, model, lightPixel, tBuffer, Lit);
     }
 }
 
-void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model, bool lightPixel) {
+void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model, bool lightPixel, TGABuffer *tBuffer, bool Lit) {
 
     int width = tgaBuffer->GetWidth();
     int height = tgaBuffer->GetHeight();
@@ -89,6 +89,26 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model, bool lightPi
                 float bar2 = ((dy31) * (x - x3) + (dx13) * (y - y3)) / ((dy31) * (dx23) + (dx13) * (dy23));
                 float bar3 = 1.f - bar1 - bar2;
 
+                Vector2 uv1 = triangle.textures[0];
+                Vector2 uv2 = triangle.textures[1];
+                Vector2 uv3 = triangle.textures[2];
+
+                Vector2 uv = uv1 * bar1 + uv2 * bar2 + uv3 * bar3;
+
+                if (uv.x < 0.0f) uv.x = 0.0f;
+                if (uv.x > 1.0f) uv.x = 1.0f;
+                if (uv.y < 0.0f) uv.y = 0.0f;
+                if (uv.y > 1.0f) uv.y = 1.0f;
+
+                unsigned int color = tBuffer->GetColor(std::llround(uv.x * tBuffer->GetWidth()) + std::llround(uv.y * tBuffer->GetHeight()) * tBuffer->GetWidth());
+
+                Vector textureColor = Vector(
+                        ((color >> 16) & 0xFF) / 255.0f,
+                        ((color >> 8) & 0xFF) / 255.0f,
+                        (color & 0xFF) / 255.0f
+                );
+
+                Vector finalColor = textureColor;
 
                 Vector interpolatedNormal = (triangle.vertices[0].normal * bar1 + triangle.vertices[1].normal * bar2 + triangle.vertices[2].normal * bar3).Normalize();
                 Vector interpolatedPosition = Vector(triangle.vertices[0].position.x * bar1 + triangle.vertices[1].position.x * bar2 + triangle.vertices[2].position.x * bar3,
@@ -97,18 +117,18 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model, bool lightPi
 
                 Vector cameraPosition{0, 0, 0};
 
-                if (lightPixel)
+                if (lightPixel && !Lit)
                 {
                     Vector lightingColor = CalculatePixelLighting(interpolatedNormal, interpolatedPosition, cameraPosition);
 
                     float depth = bar1 * z1 + bar2 * z2 + bar3 * z3;
                     if (depth < tgaBuffer->GetDepth()[y * width + x])
                     {
-                        tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(lightingColor);
+                        tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(lightingColor * textureColor);
                         tgaBuffer->GetDepth()[y * width + x] = depth;
                     }
                 }
-                else {
+                else if (!lightPixel&& !Lit) {
 
                 for (auto& vertex : triangle.vertices)
                 {
@@ -123,10 +143,21 @@ void Rasterizer::RenderTriangle(Triangle &triangle, Matrix4 &model, bool lightPi
 
                 if (depth < tgaBuffer->GetDepth()[y * width + x])
                 {
-                    tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color);
+                    tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color* textureColor);
                     tgaBuffer->GetDepth()[y * width + x] = depth;
                 }
 
+                }
+                else
+                {
+                    Vector color =  textureColor * bar1 + textureColor * bar2 + textureColor * bar3;
+                    float depth = bar1 * z1 + bar2 * z2 + bar3 * z3;
+
+                    if (depth < tgaBuffer->GetDepth()[y * width + x])
+                    {
+                        tgaBuffer->GetColorBuffer()[y * width + x] = Vector::ToColor(color * textureColor);
+                        tgaBuffer->GetDepth()[y * width + x] = depth;
+                    }
                 }
             }
         }

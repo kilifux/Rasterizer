@@ -1,5 +1,4 @@
 #include "Vector.h"
-#include "Vector.h"
 
 #include <cmath>
 
@@ -91,5 +90,13 @@ unsigned int Vector::ToColor(Vector vector) {
     int blue = static_cast<int>(vector.z * 255);
     unsigned int alpha = static_cast<int>(255);
     return (alpha << 24) |(red << 16) | (green << 8) | blue;
+}
+
+Vector Vector::operator*(Vector o) {
+    Vector result;
+    result.x = x * o.x;
+    result.y = y * o.y;
+    result.z = z * o.z;
+    return result;
 }
 

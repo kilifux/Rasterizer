@@ -8,7 +8,7 @@ class DirectionalLight : public Light {
 public:
     Vector direction;
 
-    DirectionalLight() : Light(), direction(Vector(0.0f, -1.f, 0.f).Normalize()) {}
+    DirectionalLight() : Light(), direction(Vector(2.0f, -1.f, 0.f).Normalize()) {}
 };
 
 

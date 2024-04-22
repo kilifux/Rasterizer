@@ -18,6 +18,7 @@ public:
     Vector operator-(const Vector& v) const;
     Vector operator*(float f) const;
     Vector operator/(float f) const;
+    Vector operator*(Vector o);
 
     friend std::ostream& operator<<(std::ostream& Os, const Vector& vector3);
 

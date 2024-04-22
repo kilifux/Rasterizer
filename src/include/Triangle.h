@@ -3,6 +3,7 @@
 
 #include "Vector.h"
 #include "Vertex.h"
+#include "Vector2.h"
 
 class Triangle {
 public:
@@ -10,8 +11,9 @@ public:
 
     std::vector<Vertex> vertices;
     std::vector<Vector> indices;
+    std::vector<Vector2> textures;
 
-    Triangle(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3);
+    Triangle(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, Vector2 t1, Vector2 t2, Vector2 t3);
     Triangle(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, unsigned int color1, unsigned int color2, unsigned int color3);
 
     Triangle();

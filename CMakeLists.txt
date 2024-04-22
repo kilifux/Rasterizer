@@ -35,4 +35,6 @@ add_executable(algorytmy src/src/main.cpp
         src/src/Sphere.cpp
         src/include/Sphere.h
         src/src/SpotLight.cpp
-        src/include/SpotLight.h)
+        src/include/SpotLight.h
+        src/src/Vector2.cpp
+        src/include/Vector2.h)
